@@ -1,4 +1,5 @@
 const ChluAPIQuery = require('../src')
+const ChluIPFSDID = require('chlu-ipfs-support/src/modules/did')
 const sinon = require('sinon')
 const expect = require('chai').expect
 const request = require('supertest')
@@ -6,7 +7,7 @@ const logger = require('chlu-ipfs-support/tests/utils/logger')
 
 describe('HTTP server', () => {
 
-    let chluApiQuery, chluIpfs, app,  fakeReviewRecords
+    let chluApiQuery, chluIpfs, app,  fakeReviewRecords, fakeDIDDocuments
 
     before(() => {
         // disable logs
@@ -20,12 +21,23 @@ describe('HTTP server', () => {
                 editable: false
             }
         }
+        fakeDIDDocuments = {
+            'did:chlu:abc': {
+                content: 'data'
+            }
+        }
         chluIpfs = {
             start: sinon.stub().resolves(),
             readReviewRecord: sinon.stub().callsFake(async x => {
                 return fakeReviewRecords[x]
             }),
-            logger: logger('API Server')
+            getDID: sinon.stub().callsFake(async x => {
+                return fakeDIDDocuments[x] || null
+            }),
+            logger: logger('API Server'),
+            did: {
+                isDIDID: sinon.stub().callsFake(ChluIPFSDID.isDIDID)
+            }
         }
         chluApiQuery = new ChluAPIQuery({ chluIpfs })
         app = request(chluApiQuery.api)
@@ -69,7 +81,14 @@ describe('HTTP server', () => {
             })
         })
 
-        it('GET /dids/:id')
+        it('GET /dids/:id', async () => {
+            await app.get('/api/v1/dids/lol').expect(400)
+            await app.get('/api/v1/dids/did:chlu:notexists').expect(404)
+            await app.get('/api/v1/dids/did:chlu:abc')
+                .expect(200, { content: 'data' })
+            expect(chluIpfs.getDID.calledWith('did:chlu:abc')).to.be.true
+            expect(chluIpfs.did.isDIDID.calledWith('did:chlu:abc')).to.be.true
+        })
 
         it('GET /dids/:id/reviews/writtenby')
 

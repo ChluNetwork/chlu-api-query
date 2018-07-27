@@ -65,6 +65,30 @@ class ChluAPIQuery {
             }
         })
 
+        api.get('/dids/:id', async (req, res) => {
+            const didId = req.params.id
+            this.log(`Requested DID ${didId}`)
+            if (!this.chluIpfs.did.isDIDID(didId)) {
+                res.status(400).json(createError(`DID ID ${didId} is invalid`))
+            } else {
+                try {
+                    const result = await this.chluIpfs.getDID(didId)
+                    if (result) {
+                        this.log(`DID ${didId} => OK ${JSON.stringify(result)}`)
+                        res.json(result)
+                    } else {
+                        // Not found
+                        this.log(`DID ${didId} => NOT FOUND`)
+                        res.status(404).json(createError(`DID ${didId} not found`))
+                    }
+                } catch (error) {
+                    this.log(`DID ${didId} => ERROR ${error.message}`)
+                    console.error(error)
+                    res.status(500).json(createError(error.message || 'Unknown Error'))
+                }
+            }
+        })
+
         return api
     }
 
