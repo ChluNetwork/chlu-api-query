@@ -7,7 +7,7 @@ const logger = require('chlu-ipfs-support/tests/utils/logger')
 
 describe('HTTP server', () => {
 
-    let chluApiQuery, chluIpfs, app,  fakeReviewRecords, fakeDIDDocuments
+    let chluApiQuery, chluIpfs, app,  fakeReviewRecords, fakeDIDDocuments, fakeReviewsByDID
 
     before(() => {
         // disable logs
@@ -21,6 +21,9 @@ describe('HTTP server', () => {
                 editable: false
             }
         }
+        fakeReviewsByDID = {
+            'did:chlu:abc': [ { content: 'data' }]
+        }
         fakeDIDDocuments = {
             'did:chlu:abc': {
                 content: 'data'
@@ -33,6 +36,9 @@ describe('HTTP server', () => {
             }),
             getDID: sinon.stub().callsFake(async x => {
                 return fakeDIDDocuments[x] || null
+            }),
+            getReviewsByDID: sinon.stub().callsFake(async x => {
+                return fakeReviewsByDID[x] || []
             }),
             logger: logger('API Server'),
             did: {
@@ -92,7 +98,12 @@ describe('HTTP server', () => {
 
         it('GET /dids/:id/reviews/writtenby')
 
-        it('GET /dids/:id/reviews/about')
+        it('GET /dids/:id/reviews/about', async () => {
+            await app.get('/api/v1/dids/lol/reviews/about').expect(400)
+            await app.get('/api/v1/dids/did:chlu:abc/reviews/about')
+                .expect(200, [{ content: 'data' }])
+            await app.get('/api/v1/dids/did:chlu:def/reviews/about').expect(200, [])
+        })
 
     })
 
