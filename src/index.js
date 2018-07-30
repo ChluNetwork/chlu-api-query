@@ -96,7 +96,27 @@ class ChluAPIQuery {
                 res.status(400).json(createError(`DID ID ${didId} is invalid`))
             } else {
                 try {
-                    const result = await this.chluIpfs.getReviewsByDID(didId)
+                    const result = await this.chluIpfs.getReviewsAboutDID(didId)
+                    if (result) {
+                        this.log(`Reviews by DID ${didId} => OK ${JSON.stringify(result)}`)
+                        res.json(result)
+                    }
+                } catch (error) {
+                    this.log(`Reviews by DID ${didId} => ERROR ${error.message}`)
+                    console.error(error)
+                    res.status(500).json(createError(error.message || 'Unknown Error'))
+                }
+            }
+        })
+
+        api.get('/dids/:id/reviews/writtenby', async (req, res) => {
+            const didId = req.params.id
+            this.log(`Requested Reviews about DID ${didId}`)
+            if (!this.chluIpfs.did.isDIDID(didId)) {
+                res.status(400).json(createError(`DID ID ${didId} is invalid`))
+            } else {
+                try {
+                    const result = await this.chluIpfs.getReviewsWrittenByDID(didId)
                     if (result) {
                         this.log(`Reviews by DID ${didId} => OK ${JSON.stringify(result)}`)
                         res.json(result)

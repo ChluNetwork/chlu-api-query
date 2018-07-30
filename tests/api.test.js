@@ -7,7 +7,8 @@ const logger = require('chlu-ipfs-support/tests/utils/logger')
 
 describe('HTTP server', () => {
 
-    let chluApiQuery, chluIpfs, app,  fakeReviewRecords, fakeDIDDocuments, fakeReviewsByDID
+    let chluApiQuery, chluIpfs, app
+    let fakeReviewRecords, fakeDIDDocuments, fakeReviewsWrittenByDID, fakeReviewsAboutDID
 
     before(() => {
         // disable logs
@@ -21,7 +22,10 @@ describe('HTTP server', () => {
                 editable: false
             }
         }
-        fakeReviewsByDID = {
+        fakeReviewsWrittenByDID = {
+            'did:chlu:abc': [ { content: 'data' }]
+        }
+        fakeReviewsAboutDID = {
             'did:chlu:abc': [ { content: 'data' }]
         }
         fakeDIDDocuments = {
@@ -37,8 +41,11 @@ describe('HTTP server', () => {
             getDID: sinon.stub().callsFake(async x => {
                 return fakeDIDDocuments[x] || null
             }),
-            getReviewsByDID: sinon.stub().callsFake(async x => {
-                return fakeReviewsByDID[x] || []
+            getReviewsWrittenByDID: sinon.stub().callsFake(async x => {
+                return fakeReviewsWrittenByDID[x] || []
+            }),
+            getReviewsAboutDID: sinon.stub().callsFake(async x => {
+                return fakeReviewsAboutDID[x] || []
             }),
             logger: logger('API Server'),
             did: {
@@ -96,7 +103,12 @@ describe('HTTP server', () => {
             expect(chluIpfs.did.isDIDID.calledWith('did:chlu:abc')).to.be.true
         })
 
-        it('GET /dids/:id/reviews/writtenby')
+        it('GET /dids/:id/reviews/writtenby', async () => {
+            await app.get('/api/v1/dids/lol/reviews/writtenby').expect(400)
+            await app.get('/api/v1/dids/did:chlu:abc/reviews/writtenby')
+                .expect(200, [{ content: 'data' }])
+            await app.get('/api/v1/dids/did:chlu:def/reviews/writtenby').expect(200, [])
+        })
 
         it('GET /dids/:id/reviews/about', async () => {
             await app.get('/api/v1/dids/lol/reviews/about').expect(400)
