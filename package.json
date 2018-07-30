@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "chlu-ipfs-support": "ChluNetwork/chlu-ipfs-support#cleanup-and-fixes",
+    "chlu-ipfs-support": "ChluNetwork/chlu-ipfs-support#misc-features",
     "commander": "^2.16.0",
     "cors": "^2.8.4",
     "express": "^4.16.3",

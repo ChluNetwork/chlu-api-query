@@ -970,9 +970,9 @@ chlu-did@ChluNetwork/chlu-did:
     elliptic "^6.4.0"
     js-sha3 "^0.7.0"
 
-chlu-ipfs-support@ChluNetwork/chlu-ipfs-support#cleanup-and-fixes:
+chlu-ipfs-support@ChluNetwork/chlu-ipfs-support#misc-features:
   version "0.2.0"
-  resolved "https://codeload.github.com/ChluNetwork/chlu-ipfs-support/tar.gz/ebb15bcd5f5d66fb097c618d2c041b904f7040da"
+  resolved "https://codeload.github.com/ChluNetwork/chlu-ipfs-support/tar.gz/b3c613dcf169fb40f2751039636cb41b533bc6a5"
   dependencies:
     axios "^0.18.0"
     blockcypher ChluNetwork/node-client
