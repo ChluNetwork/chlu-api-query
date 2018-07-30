@@ -2,6 +2,7 @@ const path = require('path')
 const { get } = require('lodash')
 const ChluIPFS = require('chlu-ipfs-support')
 const express = require('express')
+const cors = require('cors')
 const { isValidMultihash } = require('chlu-ipfs-support/src/utils/ipfs')
 
 class ChluAPIQuery {
@@ -30,6 +31,7 @@ class ChluAPIQuery {
 
     prepareAPI() {
         this.api = express()
+        this.api.use(cors())
         this.api.get('/', (req, res) => res.send('Chlu API Query').end())
         const apiv1 = this.prepareAPIV1()
         this.api.use('/api/v1', apiv1)
