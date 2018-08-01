@@ -73,12 +73,13 @@ class ChluAPIQuery {
 
         api.get('/dids/:id', async (req, res) => {
             const didId = req.params.id
-            this.log(`Requested DID ${didId}`)
+            const waitUntilPresent = get(req, 'query.waitUntilPresent', false) === 'true'
+            this.log(`Requested DID ${didId}, waitUntilPresent: ${waitUntilPresent ? 'yes' : 'no'}`)
             if (!this.isDIDID(didId)) {
                 res.status(400).json(createError(`DID ID ${didId} is invalid`))
             } else {
                 try {
-                    const result = await this.chluIpfs.getDID(didId)
+                    const result = await this.chluIpfs.getDID(didId, waitUntilPresent)
                     if (result) {
                         this.log(`DID ${didId} => OK ${JSON.stringify(result)}`)
                         res.json(result)
