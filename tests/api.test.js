@@ -48,7 +48,7 @@ describe('HTTP server', () => {
                 return fakeReviewsAboutDID[x] || []
             }),
             logger: logger('API Server'),
-            did: {
+            didIpfsHelper: {
                 isDIDID: sinon.stub().callsFake(ChluIPFSDID.isDIDID)
             }
         }
@@ -100,7 +100,7 @@ describe('HTTP server', () => {
             await app.get('/api/v1/dids/did:chlu:abc')
                 .expect(200, { content: 'data' })
             expect(chluIpfs.getDID.calledWith('did:chlu:abc')).to.be.true
-            expect(chluIpfs.did.isDIDID.calledWith('did:chlu:abc')).to.be.true
+            expect(chluIpfs.didIpfsHelper.isDIDID.calledWith('did:chlu:abc')).to.be.true
         })
 
         it('GET /dids/:id/reviews/writtenby', async () => {
