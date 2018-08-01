@@ -1,5 +1,4 @@
 const ChluAPIQuery = require('../src')
-const ChluIPFSDID = require('chlu-ipfs-support/src/modules/did')
 const sinon = require('sinon')
 const expect = require('chai').expect
 const request = require('supertest')
@@ -47,12 +46,10 @@ describe('HTTP server', () => {
             getReviewsAboutDID: sinon.stub().callsFake(async x => {
                 return fakeReviewsAboutDID[x] || []
             }),
-            logger: logger('API Server'),
-            didIpfsHelper: {
-                isDIDID: sinon.stub().callsFake(ChluIPFSDID.isDIDID)
-            }
+            logger: logger('API Server')
         }
         chluApiQuery = new ChluAPIQuery({ chluIpfs })
+        sinon.spy(chluApiQuery, 'isDIDID')
         app = request(chluApiQuery.api)
     })
 
@@ -100,7 +97,7 @@ describe('HTTP server', () => {
             await app.get('/api/v1/dids/did:chlu:abc')
                 .expect(200, { content: 'data' })
             expect(chluIpfs.getDID.calledWith('did:chlu:abc')).to.be.true
-            expect(chluIpfs.didIpfsHelper.isDIDID.calledWith('did:chlu:abc')).to.be.true
+            expect(chluApiQuery.isDIDID.calledWith('did:chlu:abc')).to.be.true
         })
 
         it('GET /dids/:id/reviews/writtenby', async () => {
@@ -108,6 +105,7 @@ describe('HTTP server', () => {
             await app.get('/api/v1/dids/did:chlu:abc/reviews/writtenby')
                 .expect(200, [{ content: 'data' }])
             await app.get('/api/v1/dids/did:chlu:def/reviews/writtenby').expect(200, [])
+            expect(chluApiQuery.isDIDID.calledWith('did:chlu:abc')).to.be.true
         })
 
         it('GET /dids/:id/reviews/about', async () => {
@@ -115,6 +113,8 @@ describe('HTTP server', () => {
             await app.get('/api/v1/dids/did:chlu:abc/reviews/about')
                 .expect(200, [{ content: 'data' }])
             await app.get('/api/v1/dids/did:chlu:def/reviews/about').expect(200, [])
+            expect(chluApiQuery.isDIDID.calledWith('did:chlu:abc')).to.be.true
+            expect(chluApiQuery.isDIDID.calledWith('did:chlu:def')).to.be.true
         })
 
     })

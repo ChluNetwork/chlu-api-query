@@ -29,6 +29,10 @@ class ChluAPIQuery {
         await this.chluIpfs.stop()
     }
 
+    isDIDID(didId) {
+        return typeof didId === 'string' && didId.indexOf('did:') === 0
+    }
+
     prepareAPI() {
         this.api = express()
         this.api.use(cors())
@@ -70,7 +74,7 @@ class ChluAPIQuery {
         api.get('/dids/:id', async (req, res) => {
             const didId = req.params.id
             this.log(`Requested DID ${didId}`)
-            if (!this.chluIpfs.didIpfsHelper.isDIDID(didId)) {
+            if (!this.isDIDID(didId)) {
                 res.status(400).json(createError(`DID ID ${didId} is invalid`))
             } else {
                 try {
@@ -94,7 +98,7 @@ class ChluAPIQuery {
         api.get('/dids/:id/reviews/about', async (req, res) => {
             const didId = req.params.id
             this.log(`Requested Reviews about DID ${didId}`)
-            if (!this.chluIpfs.didIpfsHelper.isDIDID(didId)) {
+            if (!this.isDIDID(didId)) {
                 res.status(400).json(createError(`DID ID ${didId} is invalid`))
             } else {
                 try {
@@ -114,7 +118,7 @@ class ChluAPIQuery {
         api.get('/dids/:id/reviews/writtenby', async (req, res) => {
             const didId = req.params.id
             this.log(`Requested Reviews about DID ${didId}`)
-            if (!this.chluIpfs.didIpfsHelper.isDIDID(didId)) {
+            if (!this.isDIDID(didId)) {
                 res.status(400).json(createError(`DID ID ${didId} is invalid`))
             } else {
                 try {
