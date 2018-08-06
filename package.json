@@ -1,5 +1,6 @@
 {
   "name": "chlu-api-query",
+  "description": "Query API HTTP Server for Chlu",
   "version": "0.1.0",
   "main": "src/index.js",
   "bin": {
@@ -9,11 +10,20 @@
     "start": "node src/bin.js start",
     "test": "mocha ./tests/**/*.test.js --exit"
   },
-  "repository": "git@github.com:ChluNetwork/chlu-api-query.git",
+  "repository": "https://github.com/ChluNetwork/chlu-api-query.git",
   "license": "MIT",
+  "author": {
+    "name": "Chlu",
+    "email": "info@chlu.io",
+    "url": "https://chlu.io"
+  },
+  "bugs": {
+    "url": "https://github.com/ChluNetwork/chlu-api-query/issues"
+  },
+  "homepage": "https://github.com/ChluNetwork/chlu-api-query/blob/master/README.md",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "chlu-ipfs-support": "ChluNetwork/chlu-ipfs-support#misc-features",
+    "chlu-ipfs-support": "ChluNetwork/chlu-ipfs-support#semver:~0.1.0",
     "commander": "^2.16.0",
     "cors": "^2.8.4",
     "express": "^4.16.3",
